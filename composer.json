@@ -1,0 +1,14 @@
+{
+  "name": "lgm/threephp",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "threephp\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.0",
+    "ext-gd": "*",
+    "lgm/pgfx": "1.0.0"
+  }
+}
