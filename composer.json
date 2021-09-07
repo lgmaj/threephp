@@ -1,6 +1,7 @@
 {
   "name": "lgm/threephp",
   "type": "project",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "threephp\\": "src/"
