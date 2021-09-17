@@ -61,7 +61,7 @@ class Renderer
                         if ($face->a->visible && $face->b->visible && $face->c->visible && (
                                 ($face->c->screen->x - $face->a->screen->x) * ($face->b->screen->y - $face->a->screen->y) -
                                 ($face->c->screen->y - $face->a->screen->y) * ($face->b->screen->x - $face->a->screen->x) > 0)) {
-                            $face->screen->z = max($face->a->screen->z, max($face->b->screen->z, $face->c->screen->z));
+                            $face->screen->z = ($face->a->screen->z + $face->b->screen->z + $face->c->screen->z) * 0.3;
                             $this->renderList[] = $face;
                         }
                     }
@@ -72,7 +72,7 @@ class Renderer
                                 ($face->d->screen->y - $face->a->screen->y) * ($face->b->screen->x - $face->a->screen->x) > 0 ||
                                 ($face->b->screen->x - $face->c->screen->x) * ($face->d->screen->y - $face->c->screen->y) -
                                 ($face->b->screen->y - $face->c->screen->y) * ($face->d->screen->x - $face->c->screen->x) > 0)) {
-                            $face->screen->z = max($face->a->screen->z, max($face->b->screen->z, $face->c->screen->z));
+                            $face->screen->z = ($face->a->screen->z + $face->b->screen->z + $face->c->screen->z + $face->d->screen->z) * 0.25;;
                             $this->renderList[] = $face;
                         }
                     }
