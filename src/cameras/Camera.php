@@ -25,6 +25,7 @@ class Camera extends Vector3
         $this->roll = 0;
 
         $this->matrix = new Matrix4();
+        $this->updateMatrix();
     }
 
     public function updateMatrix(): void

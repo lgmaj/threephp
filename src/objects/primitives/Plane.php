@@ -15,16 +15,21 @@ class Plane extends Geometry
         $width_half = $width / 2;
         $height_half = $height / 2;
 
-        $this->vertices[] = new Vertex(-$width_half, $height_half, 0);
-        $this->vertices[] = new Vertex($width_half, $height_half, 0);
-        $this->vertices[] = new Vertex($width_half, -$height_half, 0);
-        $this->vertices[] = new Vertex(-$width_half, -$height_half, 0);
+        $this->v(-$width_half, $height_half, 0);
+        $this->v($width_half, $height_half, 0);
+        $this->v($width_half, -$height_half, 0);
+        $this->v(-$width_half, -$height_half, 0);
 
-        $this->faces[] = new Face4(
-            $this->vertices[0],
-            $this->vertices[1],
-            $this->vertices[2],
-            $this->vertices[3]
-        );
+        $this->f4(0, 1, 2, 3);
+    }
+
+    private function v(float $x, float $y, float $z): void
+    {
+        $this->vertices[] = new Vertex($x, $y, $z);
+    }
+
+    private function f4(int $a, int $b, int $c, int $d): void
+    {
+        $this->faces[] = new Face4($this->vertices[$a], $this->vertices[$b], $this->vertices[$c], $this->vertices[$d]);
     }
 }
