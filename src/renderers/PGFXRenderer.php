@@ -27,7 +27,6 @@ class PGFXRenderer extends Renderer
         foreach ($this->renderList as $element) {
             if ($element instanceof Face3) {
                 $this->graphics->beginFill($element->color);
-                $this->graphics->lineStyle(1, 0x007878);
                 $this->graphics->moveTo($element->a->screen->x + $this->widthHalf, $element->a->screen->y + $this->heightHalf);
                 $this->graphics->lineTo($element->b->screen->x + $this->widthHalf, $element->b->screen->y + $this->heightHalf);
                 $this->graphics->lineTo($element->c->screen->x + $this->widthHalf, $element->c->screen->y + $this->heightHalf);
@@ -41,7 +40,7 @@ class PGFXRenderer extends Renderer
                 $this->graphics->endFill();
             } else if ($element instanceof Particle) {
                 $this->graphics->beginFill($element->material->color);
-                $this->graphics->drawCircle($element->screen->x + $this->widthHalf, $element->screen->y + $this->heightHalf, $element->size);
+                $this->graphics->drawCircle($element->screen->x + $this->widthHalf, $element->screen->y + $this->heightHalf, $element->zsize);
                 $this->graphics->endFill();
             }
         }

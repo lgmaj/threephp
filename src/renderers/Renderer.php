@@ -6,6 +6,8 @@ use threephp\cameras\Camera;
 use threephp\core\Face3;
 use threephp\core\Face4;
 use threephp\core\Matrix4;
+use threephp\core\Vector3;
+use threephp\core\Vector4;
 use threephp\objects\Mesh;
 use threephp\objects\Particle;
 use threephp\scenes\Scene;
@@ -36,7 +38,6 @@ class Renderer
 
     public function render(Scene $scene, Camera $camera): void
     {
-        $focuszoom = $camera->focus * $camera->zoom;
 
         foreach ($scene->objects as $object) {
             if ($object instanceof Mesh) {
@@ -47,13 +48,12 @@ class Renderer
 
                     $this->matrix->transform($vertex->screen);
 
-                    $divisorZ = $camera->focus + $object->screen->z;
-                    $vertex->screen->z = $divisorZ == 0 ? 0 : $focuszoom / ($camera->focus + $vertex->screen->z);
+                    $camera->projectionMatrix->transform($vertex->screen);
 
-                    $vertex->visible = $vertex->screen->z > 0;
+                    $vertex->visible = $vertex->screen->z > 0 && $object->screen->z < 1;
 
-                    $vertex->screen->x *= $vertex->screen->z;
-                    $vertex->screen->y *= $vertex->screen->z;
+                    $vertex->screen->x *= $this->widthHalf;
+                    $vertex->screen->y *= $this->heightHalf;
                 }
 
                 foreach ($object->geometry->faces as $face) {
@@ -78,21 +78,43 @@ class Renderer
                     }
                 }
             } else if ($object instanceof Particle) {
-                $object->screen->copy($object->position);
+                $screen = toVector4($object->position);
 
-                $camera->matrix->transform($object->screen);
+                $camera->matrix->transform($screen);
+                $camera->projectionMatrix->transform($screen);
 
-                $divisorZ = $camera->focus + $object->screen->z;
-                $object->screen->z = $divisorZ == 0 ? 0 : $focuszoom / $divisorZ;
+                $size = division($screen->x, $screen->w) -
+                    division(($screen->x + $camera->projectionMatrix->n11), ($screen->w + $camera->projectionMatrix->n14));
 
-                if ($object->screen->z < 0)
-                    continue;
+                $object->zsize = abs($size) * $object->size;
 
-                $object->screen->x *= $object->screen->z;
-                $object->screen->y *= $object->screen->z;
+                $object->screen->copy(toVector3($screen));
 
+                //if ($object->screen->z > 0 && $object->screen->z < 1
+                //    && $object->screen->x + $object->zsize > -1 && $object->screen->x - $object->zsize < 1
+                //    && $object->screen->y + $object->zsize > -1 && $object->screen->y - $object->zsize < 1) {
+                $object->zsize *= $this->widthHalf;
+                $object->screen->x *= $this->widthHalf;
+                $object->screen->y *= $this->heightHalf;
                 $this->renderList[] = $object;
+                // }
             }
         }
     }
+}
+
+function toVector4(Vector3 $v): Vector4
+{
+    return new Vector4($v->x, $v->y, $v->z, 1.0);
+}
+
+function toVector3(Vector4 $v): Vector3
+{
+    return new Vector3($v->x / $v->w, $v->y / $v->w, $v->z / $v->w);
+}
+
+
+function division($a, $b): float
+{
+    return $b !== 0 ? $a / $b : 0;
 }
